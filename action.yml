@@ -67,7 +67,7 @@ runs:
           build.keychain
 
     - name: Sign contents with entitlements
-      if: ${{ inputs.plist-path }} != ''
+      if: ${{ inputs.plist-path != '' }}
       shell: bash
       run: |
         codesign ${{ inputs.app-path }} \
@@ -80,7 +80,7 @@ runs:
           --deep
 
     - name: Sign contents without entitlements
-      if: ${{ inputs.plist-path }} == ''
+      if: ${{ inputs.plist-path == '' }}
       shell: bash
       run: |
         codesign ${{ inputs.app-path }} \
