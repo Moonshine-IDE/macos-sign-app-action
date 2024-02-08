@@ -4,7 +4,7 @@ description: "Deep sign macOS .app content"
 inputs:
   plist-path:
     description: "The path to the plist file"
-    required: true
+    required: false
   app-path:
     description: "The path to the binary to sign"
     required: true
@@ -66,12 +66,25 @@ runs:
           -k "${{ inputs.mac-keychain-pass }}" \
           build.keychain
 
-    - name: Sign contents
+    - name: Sign contents with entitlements
+      if: ${{ inputs.plist-path }} != ''
       shell: bash
       run: |
         codesign ${{ inputs.app-path }} \
           --sign "Developer ID Application" \
           --entitlements ${{ inputs.plist-path }} \
+          --options runtime \
+          --force \
+          --timestamp \
+          --verbose \
+          --deep
+
+    - name: Sign contents without entitlements
+      if: ${{ inputs.plist-path }} == ''
+      shell: bash
+      run: |
+        codesign ${{ inputs.app-path }} \
+          --sign "Developer ID Application" \
           --options runtime \
           --force \
           --timestamp \
